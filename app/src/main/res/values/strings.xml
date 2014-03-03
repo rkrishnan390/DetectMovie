@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">DetectMovie</string>
+    <string name="action_settings">Settings</string>
+    <string name="buttonStart">Start</string>
+    <string name="buttonStop">Stop</string>
+    <string name="statusText">Status View</string>
+    <string name="virtualLightFilteredText">Filtered Light</string>
+    <string name="lightUtilityText">Light Utility</string>
+    <string name="frameLayout_virtualLightNormContent">VirtualLightNorm</string>
+    <string name="frameLayout_virtualLightRawContent">VirtualLightRaw</string>
+    <string name="frameLayout_exposureValueContent">ExposureValue</string>
+    <string name="DEFAULTPERIOD">1000</string>
+    <string name="DEFAULTNUMSAMPLES">1</string>
+    <string name="DEFAULTREFRESHPERIOD">1</string>
+
+</resources>
