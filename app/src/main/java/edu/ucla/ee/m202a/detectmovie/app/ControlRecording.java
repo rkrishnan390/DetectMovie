@@ -97,7 +97,6 @@ class Preview extends SurfaceView implements SurfaceHolder.Callback {
         camera.takePicture(null, null, jpegCallback);
     }
 
-    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     void lockExposure() {
         Camera.Parameters parameters = camera.getParameters();
         parameters.setAutoExposureLock(true);
@@ -109,7 +108,6 @@ class Preview extends SurfaceView implements SurfaceHolder.Callback {
         getExposure();
     }
 
-    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     void unlockExposure() {
         Camera.Parameters parameters = camera.getParameters();
         parameters.setAutoExposureLock(false);
@@ -183,7 +181,6 @@ class Preview extends SurfaceView implements SurfaceHolder.Callback {
     }
 
 
-    @TargetApi(Build.VERSION_CODES.GINGERBREAD)
     public void surfaceCreated(SurfaceHolder holder) {
         camera = null;
         Camera.CameraInfo cameraInfo = new Camera.CameraInfo();

@@ -62,7 +62,7 @@ public class RecordData extends Service {
     public void onCreate() {
         Log.d(TAG, "onCreate() - Creating Service");
         soundPool = new SoundPool(1, AudioManager.STREAM_RING,0);
-        // sound = soundPool.load(this, android.R.raw.detectmovie_sound, 1);
+        sound = soundPool.load(this, R.raw.detectmovie_sound, 1);
         // firewallParser = new FirewallRuleParser();
     }
 
