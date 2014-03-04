@@ -122,7 +122,7 @@ public class RecordData extends Service {
     }
 
     public void setSamplingPeriod(int sPeriod) {
-        samplingPeriod = sPeriod;
+        this.samplingPeriod = sPeriod;
     }
 
     public int getSamplingPeriod() {
@@ -239,6 +239,7 @@ public class RecordData extends Service {
             }
             if(checkIfMovie(lightCoeffs)) {
                 soundPool.play(sound, 1.0f, 1.0f, 0, 0, 1.0f);
+                Log.d(TAG, "Movie detected!");
             }
         }
 
@@ -350,7 +351,7 @@ public class RecordData extends Service {
             curr_time = System.currentTimeMillis();
             if(curr_time - last_time >= samplingPeriod) {
                 last_time = last_time + samplingPeriod;
-                Log.d(TAG, "pollingLightValue");
+//                Log.d(TAG, "pollingLightValue");
                 if(getLightFromCamera) {
                     pollLightValue();
                     setFilterType();
@@ -408,7 +409,7 @@ public class RecordData extends Service {
     }
 
     public void processLightSample(double light) {
-        Log.d(TAG, "processLightSample");
+//        Log.d(TAG, "processLightSample");
         double filteredLight = filter(light);
         lightBuf[currIndex] = filteredLight;
         if(filteredLight != -1) {
