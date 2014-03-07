@@ -32,6 +32,7 @@ public class RecordData extends Service {
     private int refreshPeriod;
     long curr_time, last_time;
     double currAccMag = 0.0, currLight = 0.0;
+    private Date[] timeStampBuf;
     private double[] lightBuf;
     private double[] accBuf;
     boolean gotEnoughData = false;
@@ -69,6 +70,7 @@ public class RecordData extends Service {
     public void instantiateBuffer() {
         currIndex = 0;
         lightBuf = new double[numSamples*2];
+        timeStampBuf = new Date[numSamples*2];
         accBuf = new double[numSamples*2];
     }
 
@@ -171,19 +173,6 @@ public class RecordData extends Service {
         return dataStream;
     }
 
-    public void writeData() {
-        try {
-            int start = (currIndex + 2*numSamples - refreshPeriod) % (2*numSamples);
-            for(int i = start ; i < start + refreshPeriod; i++) {
-                dataStream.writeUTF(lightBuf[i % (2*numSamples)] + "\n");
-            }
-            dataStream.flush();
-        }
-        catch(Exception ex) {
-            Log.e(TAG, "Unable to write data to file");
-        }
-    }
-
     public void closeBufferedWriter(DataOutputStream opStream) {
         try {
             opStream.close();
@@ -203,6 +192,21 @@ public class RecordData extends Service {
             String dataFileName = "data" + timeStr + ".txt";
             dataStream = openBufferedWriter(dataFileName);
             isFileOpen = true;
+        }
+    }
+
+    public void writeData() {
+        try {
+            int start = (currIndex + 2*numSamples - refreshPeriod) % (2*numSamples);
+            final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+            for(int i = start ; i < start + refreshPeriod; i++) {
+                String timeStr = sdf.format(timeStampBuf[i % (2*numSamples)]);
+                dataStream.writeUTF(timeStr + ' ' + lightBuf[i % (2*numSamples)] + "\n");
+            }
+            dataStream.flush();
+        }
+        catch(Exception ex) {
+            Log.e(TAG, "Unable to write data to file");
         }
     }
 
@@ -409,8 +413,9 @@ public class RecordData extends Service {
     }
 
     public void processLightSample(double light) {
-//        Log.d(TAG, "processLightSample");
+        Log.d(TAG, "processLightSample");
         double filteredLight = filter(light);
+        timeStampBuf[currIndex] = new Date();
         lightBuf[currIndex] = filteredLight;
         if(filteredLight != -1) {
             Intent intent = new Intent("FILTEREDLIGHT");

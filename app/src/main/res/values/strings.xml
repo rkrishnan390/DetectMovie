@@ -10,8 +10,8 @@
     <string name="frameLayout_virtualLightNormContent">VirtualLightNorm</string>
     <string name="frameLayout_virtualLightRawContent">VirtualLightRaw</string>
     <string name="frameLayout_exposureValueContent">ExposureValue</string>
-    <string name="DEFAULTPERIOD">1</string>
-    <string name="DEFAULTNUMSAMPLES">50</string>
-    <string name="DEFAULTREFRESHPERIOD">50</string>
+    <string name="DEFAULTPERIOD">10</string>
+    <string name="DEFAULTNUMSAMPLES">100</string>
+    <string name="DEFAULTREFRESHPERIOD">100</string>
 
 </resources>
