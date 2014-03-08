@@ -21,6 +21,7 @@ import android.media.SoundPool;
 import android.os.Environment;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.Toast;
 
 public class RecordData extends Service {
     public static final String TAG = "RecordData";
@@ -149,7 +150,7 @@ public class RecordData extends Service {
 
     public DataOutputStream openBufferedWriter(String fileName) {
         int bufferSize = 8000;
-        File file = new File (Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + fileName);
+        File file = new File (Environment.getExternalStorageDirectory().getAbsolutePath() + "/DetectMovies/" + fileName);
         if (!file.exists()) {
             try {
                 file.createNewFile();
@@ -195,10 +196,22 @@ public class RecordData extends Service {
         }
     }
 
+    public void openLightCoeffFileForLogging() {
+        if(!isFileOpen) {
+            final Date currTime = new Date();
+            final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT-8"));
+            String timeStr = sdf.format(currTime);
+            String dataLightCoeffFileName = "LightCoefficients" + timeStr + ".txt";
+            dataStream = openBufferedWriter(dataLightCoeffFileName);
+            isFileOpen = true;
+        }
+    }
+
     public void writeData() {
         try {
             int start = (currIndex + 2*numSamples - refreshPeriod) % (2*numSamples);
-            final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+            final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss.SSS");
             for(int i = start ; i < start + refreshPeriod; i++) {
                 String timeStr = sdf.format(timeStampBuf[i % (2*numSamples)]);
                 dataStream.writeUTF(timeStr + ' ' + lightBuf[i % (2*numSamples)] + "\n");
@@ -210,7 +223,20 @@ public class RecordData extends Service {
         }
     }
 
+    public void writeLightCoeffData(int numCoeffs, double[] lightCoeffs) {
+        try {
+            for(int i = 1; i < numCoeffs; i++) {
+                dataStream.writeUTF(lightCoeffs[i] + "\n");
+            }
+            dataStream.writeUTF("\n");
+            dataStream.flush();
+        } catch (Exception e) {
+            Log.e(TAG, "Unable to write Light Coeffs to file");
+        }
+    }
+
     public void processBuffer() {
+        Log.d(TAG, "Processing Buffer");
         String isMoving = "false";
         double normFactor = this.normFactor();
         int numCoeffs = 13;
@@ -225,6 +251,12 @@ public class RecordData extends Service {
             str += String.format("a[%2d] = %10.3f\n",i,lightCoeffs[i]);
         }
         str += "\nUser is Currently Moving: %s";
+
+        openLightCoeffFileForLogging();
+        writeLightCoeffData(numCoeffs, lightCoeffs);
+        closeBufferedWriter(dataStream);
+        Log.d(TAG, "Wrote Light Coefficients");
+
 
         double accCoeff1 = goertzel(accBuf, 1);
         double accCoeff2 = goertzel(accBuf, 2);
